@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+
+<head>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+        }
+
+        #parent {
+            position: relative;
+            background: #78ffb4e0;
+            margin: auto;
+            width: 89.4%;
+            height: 89.4%;
+        }
+
+        #child {
+            position: absolute;
+            background: red;
+            font-size: 1em;
+            width: 4em;
+            padding: 0.5em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="parent" class="dropzone">
+        <div id="child" draggable="true"
+            ondragstart="event.dataTransfer.setData('text/plain', 'This text may be dragged')">drag me!</div>
+    </div>
+
+    <script>
+        var dragging = false;
+        var draggPositionOffset = {};
+        var container = document.getElementById('parent');
+        var draggable = document.getElementById('child');
+        document.addEventListener('mouseup', handleDragStop);
+        container.addEventListener('mousemove', handleMove);
+        draggable.addEventListener('mousedown', handleDragStart);
+
+        function handleDragStart(e) {
+            e.preventDefault();
+            dragging = true;
+            draggPositionOffset = { x: e.clientX - draggable.offsetLeft, y: e.clientY - draggable.offsetTop }
+        }
+
+        function handleDragStop(e) {
+            dragging = false;
+        }
+
+        function handleMove(e) {
+            if (!dragging) { return; }
+            setDraggablePosition(e);
+        }
+
+        function setDraggablePosition(e) {
+            var x = e.clientX - draggPositionOffset.x;
+            var y = e.clientY - draggPositionOffset.y;
+            updateDraggablePosition(x, y);
+        }
+
+        function updateDraggablePosition(x, y) {
+            var upperBounds = calcUpperBounds();
+            draggable.style.top = boundValue(y, 0, upperBounds.y) + 'px';
+            draggable.style.left = boundValue(x, 0, upperBounds.x) + 'px';
+        }
+
+        function calcUpperBounds() {
+            var maxX = container.offsetWidth - draggable.offsetWidth;
+            var maxY = container.offsetHeight - draggable.offsetHeight;
+            return { x: maxX, y: maxY }
+        }
+
+        function boundValue(value, lower, upper) {
+            return Math.min(Math.max(lower, value), upper);
+        }
+    </script>
+</body>
+
+</html>
