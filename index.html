@@ -72,8 +72,10 @@
 
         function updateDraggablePosition(x, y) {
             var upperBounds = calcUpperBounds();
-            draggable.style.top = boundValue(y, 0, upperBounds.y) + 'px';
-            draggable.style.left = boundValue(x, 0, upperBounds.x) + 'px';
+            var boundX = boundValue(x, 0, upperBounds.x);
+            var boundY = boundValue(y, 0, upperBounds.y)
+            draggable.style.top = makeRelativeTo(boundY, container.offsetHeight) + '%';
+            draggable.style.left = makeRelativeTo(boundX, container.offsetWidth) + '%';
         }
 
         function calcUpperBounds() {
@@ -84,6 +86,10 @@
 
         function boundValue(value, lower, upper) {
             return Math.min(Math.max(lower, value), upper);
+        }
+
+        function makeRelativeTo(value, base) {
+            return 100 * value / base;
         }
     </script>
 </body>
